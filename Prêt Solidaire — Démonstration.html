@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#123c35">
+<title>Prêt Solidaire — Démonstration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+:root{--green:#123c35;--green2:#1c5a4f;--gold:#f2c66d;--bg:#f5f7f5;--ink:#182522;--muted:#56635e;--line:#d9e2dc;--tint:#e9f1ec;--red:#a32d2d;--serif:"Source Serif 4",Georgia,serif}
+*{box-sizing:border-box}
+html{scroll-padding-top:24px}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;font-size:16px}
+h1,h2,h3{font-family:var(--serif);color:var(--green);line-height:1.2;font-weight:700}
+h1{font-size:clamp(1.9rem,5vw,2.6rem);margin:0 0 12px}
+h2{font-size:1.5rem;margin:0 0 8px}
+h2:focus{outline:none}
+h3{font-size:1.1rem;margin:0 0 6px}
+p{margin:8px 0}
+.muted{color:var(--muted)}
+.small{font-size:.9rem;color:var(--muted)}
+:focus-visible{outline:3px solid var(--green2);outline-offset:2px}
+header :focus-visible,footer :focus-visible{outline-color:var(--gold)}
+.wrap{max-width:880px;margin:0 auto}
+header{background:var(--green);color:#fff;padding:18px 16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-family:var(--serif);font-size:1.4rem;font-weight:700}
+.brand span{color:var(--gold)}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+nav button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.28);padding:8px 12px;font-size:.92rem;font-weight:600}
+nav button:hover{background:rgba(255,255,255,.12)}
+nav button[aria-current="page"]{background:#fff;color:var(--green);border-color:#fff}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:12px 18px;font-weight:700}
+.primary{background:var(--green);color:#fff}
+.primary:hover{background:#0b2b25}
+.secondary{background:var(--tint);color:var(--green)}
+.secondary:hover{background:#dbe9e0}
+.danger{background:#fae8e8;color:var(--red)}
+.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.28);padding:8px 12px;font-size:.92rem;font-weight:600}
+.ghost:hover{background:rgba(255,255,255,.12)}
+.link{background:none;color:var(--green2);padding:0;font-weight:600;text-decoration:underline;border-radius:4px}
+main{padding:32px 16px 48px}
+main .wrap{}
+.view{display:none}
+.view.active{display:block}
+.hero{padding:8px 0 4px}
+.lead{font-size:1.1rem;color:var(--muted);max-width:60ch;margin:0}
+.actions,.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:20px}
+.notice{background:#fff6df;border:1px solid #efd58f;border-left:4px solid var(--gold);border-radius:10px;padding:14px 16px;margin:24px 0 0}
+.steps{list-style:none;padding:0;margin:28px 0 0;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.steps li{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:start}
+.steps .n{grid-row:span 2;width:32px;height:32px;border-radius:50%;background:var(--gold);color:var(--green);font-weight:800;display:grid;place-items:center}
+.steps strong{color:var(--green)}
+.steps span{color:var(--muted);font-size:.95rem}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px;max-width:560px}
+form{display:grid;gap:6px}
+label{font-weight:600;font-size:.92rem;margin-top:8px}
+input{width:100%;padding:12px;border:1px solid #bfcdc5;border-radius:8px;font:inherit;background:#fff;color:var(--ink)}
+input:focus{border-color:var(--green2);outline:3px solid #b9dccb;outline-offset:0}
+.hint{font-size:.85rem;color:var(--muted);margin:0}
+.error{color:var(--red);font-weight:600;min-height:1.3em;margin:4px 0 0}
+.success{background:#e8f6ec;color:#185c35;padding:12px 14px;border-radius:10px;margin:12px 0}
+.ticket{background:var(--tint);border-radius:10px;padding:14px 16px;margin:14px 0}
+.ticket p{margin:4px 0}
+.request{border:1px solid var(--line);border-radius:12px;padding:14px;margin:10px 0;background:#fbfdfb}
+.request p{margin:4px 0;overflow-wrap:anywhere}
+ul.tips{padding-left:20px;margin:12px 0}
+ul.tips li{margin:10px 0}
+footer{text-align:center;color:var(--muted);padding:22px 16px;border-top:1px solid var(--line);font-size:.9rem}
+footer p{margin:6px 0}
+footer .link{font-size:.9rem;color:var(--muted)}
+[hidden]{display:none !important}
+@media(min-width:700px){.card{padding:32px}.hero{padding:16px 0 4px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">Prêt <span>Solidaire</span></div>
+      <button type="button" class="ghost" id="logoutBtn" hidden>Se déconnecter</button>
+    </div>
+    <nav aria-label="Navigation principale">
+      <button type="button" data-page="home">Accueil</button>
+      <button type="button" data-page="signup" data-guest>Créer un compte</button>
+      <button type="button" data-page="login" data-guest>Connexion</button>
+      <button type="button" data-page="request">Demander un prêt</button>
+      <button type="button" data-page="safety">Conseils de sécurité</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+
+<section id="home" class="view active">
+  <div class="hero">
+    <h1>Demande un prêt en quelques étapes.</h1>
+    <p class="lead">Crée ton compte, remplis le formulaire et garde ton numéro de demande.</p>
+    <div class="actions">
+      <button class="primary" type="button" data-page="signup" data-guest>Créer mon compte</button>
+      <button class="secondary" type="button" data-page="request">Commencer une demande</button>
+    </div>
+    <div class="notice"><strong>Démonstration.</strong> Ce site ne verse aucun argent et n’envoie aucune demande à un prêteur. N’entre pas de vraies données personnelles ni de vrais numéros Mobile Money.</div>
+  </div>
+  <ol class="steps">
+    <li><span class="n" aria-hidden="true">1</span><div><strong>Crée ton compte</strong><br><span>Une adresse e-mail et un mot de passe suffisent.</span></div></li>
+    <li><span class="n" aria-hidden="true">2</span><div><strong>Remplis le formulaire</strong><br><span>Montant, pays, ville et coordonnées de test.</span></div></li>
+    <li><span class="n" aria-hidden="true">3</span><div><strong>Garde ton numéro</strong><br><span>Il s’affiche après l’enregistrement sur cet appareil.</span></div></li>
+  </ol>
+</section>
+
+<section id="signup" class="view">
+  <div class="card">
+    <h2>Créer un compte</h2>
+    <p class="muted">Tes informations restent dans le stockage de ce navigateur. Rien n’est envoyé à un serveur.</p>
+    <form id="signupForm" novalidate>
+      <label for="s-name">Nom complet</label>
+      <input id="s-name" autocomplete="name" required>
+      <label for="s-email">Adresse e-mail</label>
+      <input id="s-email" type="email" autocomplete="email" required>
+      <label for="s-pass">Mot de passe</label>
+      <input id="s-pass" type="password" minlength="8" autocomplete="new-password" aria-describedby="s-pass-hint" required>
+      <p id="s-pass-hint" class="hint">8 caractères minimum.</p>
+      <label for="s-pass2">Confirmer le mot de passe</label>
+      <input id="s-pass2" type="password" minlength="8" autocomplete="new-password" required>
+      <p id="signupError" class="error" role="alert"></p>
+      <div class="row"><button class="primary" type="submit">Créer mon compte</button></div>
+    </form>
+    <p class="small">Déjà un compte ? <button type="button" class="link" data-page="login">Me connecter</button></p>
+  </div>
+</section>
+
+<section id="login" class="view">
+  <div class="card">
+    <h2>Se connecter</h2>
+    <form id="loginForm" novalidate>
+      <label for="l-email">Adresse e-mail</label>
+      <input id="l-email" type="email" autocomplete="email" required>
+      <label for="l-pass">Mot de passe</label>
+      <input id="l-pass" type="password" autocomplete="current-password" required>
+      <p id="loginError" class="error" role="alert"></p>
+      <div class="row"><button class="primary" type="submit">Me connecter</button></div>
+    </form>
+    <p class="small">Pas encore de compte ? <button type="button" class="link" data-page="signup">Créer un compte</button></p>
+  </div>
+</section>
+
+<section id="request" class="view">
+  <div class="card">
+    <h2>Ta demande de prêt</h2>
+    <p class="muted" id="requestWelcome">Tu peux remplir ce formulaire sans te connecter.</p>
+    <form id="requestForm" novalidate>
+      <label for="r-amount">Montant demandé (FCFA)</label>
+      <input id="r-amount" type="number" min="5000" max="100000" step="500" inputmode="numeric" aria-describedby="r-amount-hint" required>
+      <p id="r-amount-hint" class="hint">Entre 5 000 et 100 000 FCFA, par tranches de 500.</p>
+      <label for="r-country">Pays</label>
+      <input id="r-country" value="Bénin" autocomplete="country-name" required>
+      <label for="r-city">Ville</label>
+      <input id="r-city" autocomplete="address-level2" required>
+      <label for="r-pay">Numéro Mobile Money de test</label>
+      <input id="r-pay" type="tel" inputmode="tel" autocomplete="off" placeholder="Numéro fictif" aria-describedby="test-hint" required>
+      <label for="r-call">Numéro de contact de test</label>
+      <input id="r-call" type="tel" inputmode="tel" autocomplete="off" placeholder="Numéro fictif" aria-describedby="test-hint" required>
+      <p id="test-hint" class="hint">Utilise un numéro fictif. Aucun paiement n’est effectué.</p>
+      <p id="requestError" class="error" role="alert"></p>
+      <div class="row">
+        <button class="primary" type="submit">Envoyer ma demande</button>
+        <button type="button" class="link" data-page="safety">Lire les conseils de sécurité</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section id="done" class="view">
+  <div class="card">
+    <h2>Demande enregistrée sur cet appareil</h2>
+    <div class="success">Ta demande de démonstration a été enregistrée localement.</div>
+    <div class="ticket">
+      <p><strong>Numéro de demande :</strong> <span id="ticketNumber">—</span></p>
+      <p><strong>Date :</strong> <span id="ticketDate">—</span></p>
+      <p><strong>Montant :</strong> <span id="ticketAmount">—</span></p>
+    </div>
+    <p class="muted">Cette confirmation ne signifie pas qu’un prêt a été approuvé ou envoyé.</p>
+    <div class="actions">
+      <button class="primary" type="button" data-page="request">Faire une autre demande</button>
+      <button class="secondary" type="button" data-page="home">Retour à l’accueil</button>
+    </div>
+  </div>
+</section>
+
+<section id="safety" class="view">
+  <div class="card">
+    <h2>Conseils de sécurité</h2>
+    <ul class="tips">
+      <li>Ne paie jamais de frais à l’avance pour obtenir un prêt.</li>
+      <li>Ne partage jamais ton mot de passe ni tes codes Mobile Money.</li>
+      <li>Vérifie l’identité et l’existence légale de tout organisme de prêt.</li>
+      <li>Lis attentivement les conditions de remboursement avant de t’engager.</li>
+      <li>Cette version de démonstration ne traite aucun prêt réel et ne contacte aucun prêteur.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="adminLogin" class="view">
+  <div class="card">
+    <h2>Espace admin</h2>
+    <p class="muted">Accès de démonstration. Les données restent dans ce navigateur.</p>
+    <form id="adminForm" novalidate>
+      <label for="a-pass">Mot de passe admin</label>
+      <input id="a-pass" type="password" autocomplete="off" required>
+      <p id="adminError" class="error" role="alert"></p>
+      <div class="row"><button class="primary" type="submit">Entrer</button></div>
+    </form>
+  </div>
+</section>
+
+<section id="admin" class="view">
+  <div class="card">
+    <h2>Demandes enregistrées</h2>
+    <p class="muted">Liste locale uniquement. Les demandes ne sont visibles que dans ce navigateur.</p>
+    <div id="requestList"></div>
+    <div class="actions">
+      <button class="secondary" id="refreshBtn" type="button">Actualiser</button>
+      <button class="danger" id="clearBtn" type="button">Effacer les demandes locales</button>
+      <button class="secondary" type="button" data-page="home">Accueil</button>
+    </div>
+  </div>
+</section>
+
+</div>
+</main>
+
+<footer>
+  <p>Prêt Solidaire — Démonstration locale. Aucun prêt réel n’est accordé par cette page.</p>
+  <p><button type="button" class="link" data-page="adminLogin">Espace admin</button></p>
+</footer>
+
+<script>
+(function(){
+'use strict';
+// Démonstration uniquement : ce mot de passe est visible dans le code. Ne pas utiliser en production.
+const ADMIN_PASSWORD = '97473050';
+const $ = (id) => document.getElementById(id);
+const KEYS = {users:'pretSolidaireUsers_v1', requests:'pretSolidaireRequests_v1', current:'pretSolidaireCurrentUser_v1'};
+
+function read(key, fallback){try{const v=localStorage.getItem(key);return v===null?fallback:JSON.parse(v)}catch(e){return fallback}}
+function write(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch(e){alert('Le stockage du navigateur est indisponible. Essaie dans un navigateur normal, pas en aperçu intégré.');return false}}
+function clearError(id){$(id).textContent=''}
+function safeText(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function makeId(){return 'PS-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase()}
+function currentUser(){return read(KEYS.current,null)}
+
+function showPage(id){
+  const target=$(id); if(!target) return;
+  document.querySelectorAll('.view').forEach(el=>el.classList.toggle('active', el===target));
+  document.querySelectorAll('nav [data-page]').forEach(b=>{
+    if(b.dataset.page===id) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
+  });
+  if(id==='admin') renderRequests();
+  if(id==='request') updateSession();
+  window.scrollTo({top:0,behavior:'auto'});
+  const heading=target.querySelector('h1,h2');
+  if(heading){heading.setAttribute('tabindex','-1'); heading.focus({preventScroll:true});}
+}
+
+function updateSession(){
+  const user=currentUser();
+  document.querySelectorAll('[data-guest]').forEach(b=>{b.hidden=!!user});
+  $('logoutBtn').hidden=!user;
+  $('requestWelcome').textContent=user
+    ? 'Connecté en tant que '+user.name+'. Remplis le formulaire de démonstration.'
+    : 'Tu peux remplir ce formulaire sans te connecter.';
+}
+
+async function digest(value){
+  if(window.crypto && window.crypto.subtle && window.isSecureContext && window.TextEncoder){
+    try{const buf=await window.crypto.subtle.digest('SHA-256',new TextEncoder().encode(value));return Array.from(new Uint8Array(buf)).map(n=>n.toString(16).padStart(2,'0')).join('')}catch(e){}
+  }
+  // Repli pour les fichiers ouverts localement : ce n’est pas un hachage sécurisé.
+  return 'local-demo:'+btoa(unescape(encodeURIComponent(value)));
+}
+
+document.addEventListener('click',function(event){
+  const button=event.target.closest('[data-page]');
+  if(button){event.preventDefault();showPage(button.getAttribute('data-page'))}
+});
+
+$('logoutBtn').addEventListener('click',function(){
+  write(KEYS.current,null);
+  updateSession();
+  showPage('home');
+});
+
+$('signupForm').addEventListener('submit',async function(event){
+  event.preventDefault();clearError('signupError');
+  const name=$('s-name').value.trim(), email=$('s-email').value.trim().toLowerCase(), pass=$('s-pass').value, pass2=$('s-pass2').value;
+  if(!name||!email||!pass){$('signupError').textContent='Remplis tous les champs.';return}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){$('signupError').textContent='Saisis une adresse e-mail valide.';return}
+  if(pass.length<8){$('signupError').textContent='Le mot de passe doit contenir au moins 8 caractères.';return}
+  if(pass!==pass2){$('signupError').textContent='Les deux mots de passe ne correspondent pas.';return}
+  const users=read(KEYS.users,[]);
+  if(users.some(user=>user.email===email)){$('signupError').textContent='Un compte existe déjà avec cette adresse e-mail.';return}
+  users.push({name,email,passwordHash:await digest(pass),createdAt:new Date().toISOString()});
+  if(!write(KEYS.users,users))return;
+  write(KEYS.current,{name,email});
+  $('signupForm').reset();updateSession();showPage('request');
+});
+
+$('loginForm').addEventListener('submit',async function(event){
+  event.preventDefault();clearError('loginError');
+  const email=$('l-email').value.trim().toLowerCase(), pass=$('l-pass').value;
+  if(!email||!pass){$('loginError').textContent='Saisis ton e-mail et ton mot de passe.';return}
+  const users=read(KEYS.users,[]), hash=await digest(pass), user=users.find(item=>item.email===email&&item.passwordHash===hash);
+  if(!user){$('loginError').textContent='Identifiants incorrects ou compte introuvable.';return}
+  write(KEYS.current,{name:user.name,email:user.email});
+  $('loginForm').reset();updateSession();showPage('request');
+});
+
+$('requestForm').addEventListener('submit',function(event){
+  event.preventDefault();clearError('requestError');
+  const amount=Number($('r-amount').value), country=$('r-country').value.trim(), city=$('r-city').value.trim(), pay=$('r-pay').value.trim(), phone=$('r-call').value.trim();
+  if(!Number.isFinite(amount)||amount<5000||amount>100000||amount%500!==0){$('requestError').textContent='Le montant doit être compris entre 5 000 et 100 000 FCFA, par tranches de 500.';return}
+  if(!country||!city||!pay||!phone){$('requestError').textContent='Remplis tous les champs avant d’envoyer.';return}
+  const current=currentUser();
+  const requests=read(KEYS.requests,[]);
+  const request={id:makeId(),date:new Date().toISOString(),name:current?.name||'Visiteur',email:current?.email||'',amount,country,city,pay,phone,status:'Reçue (démo)'};
+  requests.unshift(request);
+  if(!write(KEYS.requests,requests))return;
+  $('ticketNumber').textContent=request.id;
+  $('ticketDate').textContent=new Date(request.date).toLocaleString('fr-FR');
+  $('ticketAmount').textContent=amount.toLocaleString('fr-FR')+' FCFA';
+  $('requestForm').reset();$('r-country').value='Bénin';showPage('done');
+});
+
+$('adminForm').addEventListener('submit',function(event){
+  event.preventDefault();clearError('adminError');
+  if($('a-pass').value.replace(/\s/g,'')!==ADMIN_PASSWORD){$('adminError').textContent='Mot de passe incorrect.';return}
+  $('adminForm').reset();showPage('admin');
+});
+
+function renderRequests(){
+  const requests=read(KEYS.requests,[]), container=$('requestList');
+  if(!requests.length){container.innerHTML='<p class="muted">Aucune demande enregistrée pour le moment.</p>';return}
+  container.innerHTML=requests.map(r=>'<article class="request"><h3>'+safeText(r.id)+' · '+safeText(Number(r.amount).toLocaleString('fr-FR'))+' FCFA</h3><p><strong>Nom :</strong> '+safeText(r.name)+'</p><p><strong>E-mail :</strong> '+safeText(r.email||'Non renseigné')+'</p><p><strong>Lieu :</strong> '+safeText(r.city)+', '+safeText(r.country)+'</p><p><strong>Mobile Money :</strong> '+safeText(r.pay)+'</p><p><strong>Contact :</strong> '+safeText(r.phone)+'</p><p><strong>Date :</strong> '+safeText(new Date(r.date).toLocaleString('fr-FR'))+'</p><p><strong>Statut :</strong> '+safeText(r.status)+'</p></article>').join('');
+}
+$('refreshBtn').addEventListener('click',renderRequests);
+$('clearBtn').addEventListener('click',function(){
+  if(confirm('Effacer toutes les demandes enregistrées dans ce navigateur ?')){write(KEYS.requests,[]);renderRequests()}
+});
+
+updateSession();
+})();
+</script>
+</body>
+</html>
