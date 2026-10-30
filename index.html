@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faites votre demande</title>
+<style>
+:root{--rouge:#CE1126;--vert:#007A3D;--blanc:#FFFFFF;--texte:#111111;--gris:#4b5563;--bord:#6b7280}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--blanc);color:var(--texte);line-height:1.5}
+.bandeau{height:10px;background:linear-gradient(90deg,var(--vert) 33.33%,var(--blanc) 33.33% 66.66%,var(--rouge) 66.66%)}
+.conteneur{max-width:560px;margin:0 auto;padding:24px 16px 48px}
+.carte{border:3px solid var(--texte);border-radius:12px;padding:24px;background:var(--blanc);border-top:10px solid var(--rouge)}
+h1{color:var(--rouge);font-size:1.8rem;margin:0 0 8px}
+.intro{color:var(--gris);margin:0 0 24px}
+label{display:block;font-weight:bold;margin-top:18px;margin-bottom:4px}
+.aide,.facultatif{font-weight:normal;color:var(--gris);font-size:.9rem}
+input,textarea{width:100%;padding:12px;font-size:1rem;border:2px solid var(--bord);border-radius:8px;font-family:inherit;background:#fff}
+input:focus,textarea:focus{outline:none;border-color:var(--vert)}
+textarea{min-height:140px;resize:vertical}
+.bouton{display:inline-block;margin-top:20px;padding:14px 26px;font-size:1rem;font-weight:bold;color:#fff;background:var(--vert);border:none;border-radius:8px;cursor:pointer}
+.bouton:hover{background:#005a2d}
+.bouton.rouge{background:var(--rouge)}
+.bouton.rouge:hover{background:#a00e20}
+.bouton:disabled{opacity:.6;cursor:wait}
+.lien{background:none;border:none;color:var(--rouge);font-weight:bold;text-decoration:underline;cursor:pointer;font-size:1rem;padding:0;margin-top:8px}
+.separateur{border:none;border-top:3px solid var(--texte);margin:28px 0 12px}
+.ticket{margin-top:20px;padding:16px;border:3px solid var(--vert);background:#eaf7ef;border-radius:10px}
+.ticket strong{font-size:1.4rem;letter-spacing:2px;color:var(--rouge)}
+.erreur{color:var(--rouge);font-weight:bold;margin-top:12px}
+.msg{color:var(--gris);margin-top:14px}
+.hidden{display:none}
+.paiement-bloc{margin-top:8px;padding:12px;border:2px dashed var(--vert);border-radius:8px}
+.resultat{margin-top:16px;padding:14px;border-left:6px solid var(--vert);background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.resultat p{margin:4px 0;word-break:break-word}
+.texte-demande{white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div class="bandeau"></div>
+<div class="conteneur">
+<div class="carte">
+
+<!-- Vue demande publique -->
+<div id="vue-demande">
+<h1>Faites votre demande</h1>
+<p class="intro">Écrivez de quoi vous avez besoin, et de combien vous avez besoin pour démarrer. Nous vous répondrons dans un bref délai.</p>
+<form id="form-demande" novalidate>
+<label for="demande">Votre demande <span class="aide">Décrivez votre besoin en 60 lignes maximum</span></label>
+<textarea id="demande"></textarea>
+
+<label for="telephone">Votre numéro de téléphone</label>
+<input id="telephone" type="tel">
+
+<label for="email">Votre adresse e-mail</label>
+<input id="email" type="email">
+
+<label>Numéro de paiement Mobile Money <span class="facultatif">Facultatif, renseignez celui que vous utilisez</span></label>
+<div class="paiement-bloc">
+<label for="wave">Wave</label>
+<input id="wave" type="tel">
+<label for="orange">Orange Money</label>
+<input id="orange" type="tel">
+<label for="mtn">MTN Money</label>
+<input id="mtn" type="tel">
+<label for="move">Move Money</label>
+<input id="move" type="tel">
+</div>
+
+<button type="submit" class="bouton" id="btn-envoyer">Envoyer ma demande</button>
+</form>
+
+<div id="zone-ticket" class="hidden"></div>
+<div id="erreur-form" class="erreur hidden"></div>
+
+<hr class="separateur">
+<div style="text-align:center"><button class="lien" id="btn-acces-admin">Accès admin</button></div>
+</div>
+
+<!-- Vue code admin -->
+<div id="vue-code" class="hidden">
+<h1>Accès admin</h1>
+<p class="intro">Saisissez le code d'accès pour continuer.</p>
+<label for="code">Code d'accès</label>
+<input id="code" type="password">
+<button class="bouton rouge" id="btn-ouvrir">Ouvrir</button>
+<div id="erreur-code" class="erreur hidden">Code incorrect. Réessayez.</div>
+<div style="margin-top:16px"><button class="lien" id="btn-retour-demande">Retour à la demande</button></div>
+</div>
+
+<!-- Vue zone admin -->
+<div id="vue-admin" class="hidden">
+<h1>Zone admin</h1>
+<p class="intro">Cherchez une demande par numéro de ticket, téléphone ou e-mail. Laissez vide pour tout afficher.</p>
+<label for="recherche">Recherche</label>
+<input id="recherche" type="text">
+<button class="bouton" id="btn-rechercher">Rechercher</button>
+<div id="resultats"></div>
+<div style="margin-top:16px"><button class="lien" id="btn-quitter-admin">Quitter la zone admin</button></div>
+</div>
+
+</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+// ===== CONFIGURATION FIREBASE =====
+// Remplace les deux valeurs COLLE_... par celles de ton ancien index.html
+// (apiKey et appId, copiées exactement, entre guillemets).
+const firebaseConfig = {
+  apiKey: "AIzaSyDIV70yTtnAe98L0ZvLo0YzaAJaSrSBOx8",
+  authDomain: "pret-fe416.firebaseapp.com",
+  projectId: "pret-fe416",
+  storageBucket: "pret-fe416.firebasestorage.app",
+  messagingSenderId: "455291468809",
+  appId: "1:455291468809:web:92e132c0a1cb816dea4cd8",
+  measurementId: "G-XFLMSN18S7"
+};
+
+const CODE_ADMIN = "2029";
+const CARACTERES = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+let db = null;
+try {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+} catch (e) {
+  console.error("Firebase non initialisé :", e);
+}
+
+const $ = id => document.getElementById(id);
+
+function afficher(vue) {
+  ["vue-demande", "vue-code", "vue-admin"].forEach(v => $(v).classList.toggle("hidden", v !== vue));
+}
+
+function genererTicket() {
+  let t = "";
+  for (let i = 0; i < 6; i++) t += CARACTERES[Math.floor(Math.random() * CARACTERES.length)];
+  return "TK-" + t;
+}
+
+// Ignore tirets, espaces et minuscules pour la recherche
+function cle(s) { return String(s || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); }
+function chiffres(s) { return String(s || "").replace(/\D/g, ""); }
+
+function erreurForm(msg) {
+  const e = $("erreur-form");
+  e.textContent = msg;
+  e.classList.remove("hidden");
+  return false;
+}
+
+// ===== ENVOI DE LA DEMANDE =====
+$("form-demande").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  $("erreur-form").classList.add("hidden");
+  $("zone-ticket").classList.add("hidden");
+
+  const demande = $("demande").value.trim();
+  const telephone = $("telephone").value.trim();
+  const email = $("email").value.trim();
+
+  if (!demande) return erreurForm("Merci de décrire votre demande.");
+  if (demande.split("\n").length > 60) return erreurForm("Votre demande dépasse 60 lignes.");
+  if (!telephone) return erreurForm("Merci d'indiquer votre numéro de téléphone.");
+  if (!email || !/^\S+@\S+\.\S+$/.test(email)) return erreurForm("Merci d'indiquer une adresse e-mail valide.");
+  if (!db) return erreurForm("Le site n'est pas connecté à la base. Vérifiez la configuration Firebase.");
+
+  const paiements = {};
+  [["wave", "Wave"], ["orange", "Orange Money"], ["mtn", "MTN Money"], ["move", "Move Money"]].forEach(([id, nom]) => {
+    const v = $(id).value.trim();
+    if (v) paiements[nom] = v;
+  });
+
+  const ticket = genererTicket();
+  const btn = $("btn-envoyer");
+  btn.disabled = true;
+
+  try {
+    await db.collection("demandes").add({
+      ticket,
+      demande,
+      telephone,
+      email,
+      paiements,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    $("zone-ticket").innerHTML =
+      '<div class="ticket">Votre numéro de ticket : <strong>' + ticket + '</strong><br>Gardez-le et envoyez-le sur WhatsApp.</div>';
+    $("zone-ticket").classList.remove("hidden");
+
+    ["demande", "telephone", "email", "wave", "orange", "mtn", "move"].forEach(id => $(id).value = "");
+  } catch (e) {
+    erreurForm("Erreur lors de l'envoi : " + e.message);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// ===== ACCÈS ADMIN =====
+$("btn-acces-admin").addEventListener("click", () => {
+  $("code").value = "";
+  $("erreur-code").classList.add("hidden");
+  afficher("vue-code");
+});
+
+$("btn-retour-demande").addEventListener("click", () => afficher("vue-demande"));
+
+function verifierCode() {
+  if ($("code").value.trim() === CODE_ADMIN) {
+    $("erreur-code").classList.add("hidden");
+    afficher("vue-admin");
+    rechercher();
+  } else {
+    $("erreur-code").classList.remove("hidden");
+  }
+}
+
+$("btn-ouvrir").addEventListener("click", verifierCode);
+$("code").addEventListener("keydown", e => { if (e.key === "Enter") verifierCode(); });
+
+$("btn-quitter-admin").addEventListener("click", () => {
+  $("code").value = "";
+  $("recherche").value = "";
+  $("resultats").innerHTML = "";
+  afficher("vue-demande");
+});
+
+// ===== RECHERCHE =====
+async function rechercher() {
+  const out = $("resultats");
+  if (!db) {
+    out.innerHTML = "<p class='erreur'>Base non connectée.</p>";
+    return;
+  }
+
+  const q = $("recherche").value.trim();
+  out.innerHTML = "<p class='msg'>Recherche en cours...</p>";
+
+  try {
+    const snap = await db.collection("demandes").orderBy("createdAt", "desc").get();
+    const qc = cle(q);
+    const qd = chiffres(q);
+    const qe = q.toLowerCase();
+
+    const docs = snap.docs.map(d => d.data()).filter(d => {
+      if (!q) return true;
+      if (qc && cle(d.ticket).includes(qc)) return true;
+      if (qd.length >= 4 && chiffres(d.telephone).includes(qd)) return true;
+      if (qe && String(d.email || "").toLowerCase().includes(qe)) return true;
+      return false;
+    });
+
+    out.innerHTML = "";
+
+    if (!docs.length) {
+      const p = document.createElement("p");
+      p.className = "msg";
+      p.textContent = "Aucune demande trouvée.";
+      out.appendChild(p);
+      return;
+    }
+
+    const compte = document.createElement("p");
+    compte.className = "msg";
+    compte.textContent = docs.length + " demande(s) trouvée(s).";
+    out.appendChild(compte);
+
+    docs.forEach(d => {
+      const div = document.createElement("div");
+      div.className = "resultat";
+
+      const lignes = [["Ticket", d.ticket], ["Téléphone", d.telephone], ["E-mail", d.email]];
+      Object.entries(d.paiements || {}).forEach(([nom, num]) => lignes.push([nom, num]));
+      lignes.push(["Demande", d.demande]);
+
+      lignes.forEach(([k, v]) => {
+        const p = document.createElement("p");
+        const s = document.createElement("strong");
+        s.textContent = k + " : ";
+        p.appendChild(s);
+        const valeur = document.createElement("span");
+        valeur.textContent = v || "";
+        if (k === "Demande") valeur.className = "texte-demande";
+        p.appendChild(valeur);
+        div.appendChild(p);
+      });
+
+      out.appendChild(div);
+    });
+  } catch (e) {
+    out.innerHTML = "";
+    const p = document.createElement("p");
+    p.className = "erreur";
+    p.textContent = "Erreur de recherche : " + e.message;
+    out.appendChild(p);
+  }
+}
+
+$("btn-rechercher").addEventListener("click", rechercher);
+$("recherche").addEventListener("keydown", e => { if (e.key === "Enter") rechercher(); });
+</script>
+</body>
+</html>
